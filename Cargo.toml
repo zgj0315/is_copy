@@ -1,0 +1,8 @@
+[package]
+edition = "2021"
+name = "is_copy"
+version = "0.1.0"
+
+[dependencies]
+log = "0.4"
+md5 = "0.7"
