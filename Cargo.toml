@@ -1,6 +1,10 @@
 [package]
+description = "Determine whether two files are copies of each other"
+documentation = "https://docs.rs/is_copy"
 edition = "2021"
+license = "MIT"
 name = "is_copy"
+repository = "https://github.com/zgj0315/is_copy/"
 version = "0.1.0"
 
 [dependencies]
