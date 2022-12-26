@@ -1,11 +1,14 @@
 [package]
+authors = ["Zhao Guangjian<zgj0315@gmail.com>"]
 description = "Determine whether two files are copies of each other"
 documentation = "https://docs.rs/is_copy"
 edition = "2021"
-license = "MIT"
+keywords = ["copy", "file", "is file copy", "is copy"]
+license = "MIT/Apache-2.0"
 name = "is_copy"
+readme = "README.md"
 repository = "https://github.com/zgj0315/is_copy/"
-version = "0.1.0"
+version = "0.1.1"
 
 [dependencies]
 log = "0.4"
