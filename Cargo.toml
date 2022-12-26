@@ -12,11 +12,11 @@ version = "0.1.4"
 
 [dependencies]
 log = "0.4"
-md-5 = "0.10"
 
 [dev-dependencies]
 chrono = "0.4"
 criterion = {version = "0.4", features = ["html_reports"]}
+image = "0.24"
 tracing = "0.1"
 tracing-subscriber = "0.3"
 
