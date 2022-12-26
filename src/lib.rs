@@ -1,3 +1,43 @@
+//! # Usage
+//!
+//! Add this to your *Cargo.toml*:
+//! ```toml
+//! [dependencies]
+//! is_copy = "0.1"
+//! ```
+//!
+//! # Examples
+//! Create and determin file using is_copy:
+//! ```
+//! use std::{
+//!     fs::{self, copy, File},
+//!     io::Write,
+//!     path::{Path, PathBuf},
+//! };
+//! use is_copy::is_file_copy;
+//!
+//! let path_data = Path::new("./data");
+//! if path_data.exists() {
+//!     fs::remove_dir_all(path_data).unwrap();
+//! }
+//! fs::create_dir_all(path_data).unwrap();
+//! let path_a = path_data.join("file_a.txt");
+//! let path_a_copy = path_data.join("file_a_copy.txt");
+//! let path_b = path_data.join("file_b.txt");
+//! let mut file_a = File::create(&path_a).unwrap();
+//! let mut file_b = File::create(&path_b).unwrap();
+//! file_a.write_all(b"this is file a").unwrap();
+//! file_b.write_all(b"this is file b").unwrap();
+//! for i in 0..1000_000 {
+//!     let line = format!("this is line {}\n", i);
+//!     file_a.write_all(line.as_bytes()).unwrap();
+//!     file_b.write_all(line.as_bytes()).unwrap();
+//! }
+//! copy(&path_a, &path_a_copy).unwrap();
+//! assert!(is_file_copy(&path_a, &path_a_copy));
+//! assert!(!is_file_copy(&path_a, &path_b));
+//! ```
+
 use std::{
     fs::{self, File},
     io::Read,
