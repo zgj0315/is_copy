@@ -3,16 +3,16 @@ authors = ["Zhao Guangjian<zgj0315@gmail.com>"]
 description = "Determine whether two files are copies of each other"
 documentation = "https://docs.rs/is_copy"
 edition = "2021"
-keywords = ["copy", "file", "is_file_copy", "is_copy"]
+keywords = ["copy", "file", "is_file_copy", "is_copy", "file_copy", "copy_file"]
 license = "MIT/Apache-2.0"
 name = "is_copy"
 readme = "README.md"
 repository = "https://github.com/zgj0315/is_copy/"
-version = "0.1.3"
+version = "0.1.4"
 
 [dependencies]
 log = "0.4"
-md5 = "0.7"
+md-5 = "0.10"
 
 [dev-dependencies]
 chrono = "0.4"

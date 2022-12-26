@@ -44,6 +44,8 @@ use std::{
     path::Path,
 };
 
+use md5::{Digest, Md5};
+
 pub fn is_file_copy(path_a: &Path, path_b: &Path) -> bool {
     log::trace!("path_a: {:?}, path_b: {:?}", path_a, path_b);
     if path_a == path_b {
@@ -61,11 +63,11 @@ pub fn is_file_copy(path_a: &Path, path_b: &Path) -> bool {
     let mut file = File::open(path_a).unwrap();
     let mut buf = Vec::with_capacity(input_size.try_into().unwrap());
     file.read_to_end(&mut buf).unwrap();
-    let input_md5 = format!("{:X}", md5::compute(buf));
+    let input_md5 = format!("{:X}", Md5::digest(buf));
     let mut file = File::open(path_b).unwrap();
     let mut buf = Vec::with_capacity(output_size.try_into().unwrap());
     file.read_to_end(&mut buf).unwrap();
-    let output_md5 = format!("{:X}", md5::compute(buf));
+    let output_md5 = format!("{:X}", Md5::digest(buf));
     if input_md5 == output_md5 {
         log::trace!("same md5, {}", input_md5);
         return true;
