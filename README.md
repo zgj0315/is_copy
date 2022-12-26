@@ -12,7 +12,6 @@ is_copy = "0.1"
 Create and determin file using is_copy:
 
 ```rust
-#[macro_use]
 use is_copy::is_file_copy;
 
 let path_a = Path::new("./data/file_a.txt");
