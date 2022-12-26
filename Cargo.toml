@@ -12,7 +12,6 @@ version = "0.1.4"
 
 [dependencies]
 log = "0.4"
-md-5 = "0.10"
 
 [dev-dependencies]
 chrono = "0.4"

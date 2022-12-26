@@ -28,7 +28,7 @@
 //! let mut file_b = File::create(&path_b).unwrap();
 //! file_a.write_all(b"this is file a").unwrap();
 //! file_b.write_all(b"this is file b").unwrap();
-//! for i in 0..1000_000 {
+//! for i in 0..1_000 {
 //!     let line = format!("this is line {}\n", i);
 //!     file_a.write_all(line.as_bytes()).unwrap();
 //!     file_b.write_all(line.as_bytes()).unwrap();
@@ -44,8 +44,6 @@ use std::{
     path::Path,
 };
 
-use md5::{Digest, Md5};
-
 pub fn is_file_copy(path_a: &Path, path_b: &Path) -> bool {
     log::trace!("path_a: {:?}, path_b: {:?}", path_a, path_b);
     if path_a == path_b {
@@ -60,19 +58,17 @@ pub fn is_file_copy(path_a: &Path, path_b: &Path) -> bool {
         return false;
     }
     log::trace!("same size, {}", input_size);
-    let mut file = File::open(path_a).unwrap();
-    let mut buf = Vec::with_capacity(input_size.try_into().unwrap());
-    file.read_to_end(&mut buf).unwrap();
-    let input_md5 = format!("{:X}", Md5::digest(buf));
-    let mut file = File::open(path_b).unwrap();
-    let mut buf = Vec::with_capacity(output_size.try_into().unwrap());
-    file.read_to_end(&mut buf).unwrap();
-    let output_md5 = format!("{:X}", Md5::digest(buf));
-    if input_md5 == output_md5 {
-        log::trace!("same md5, {}", input_md5);
+    let mut file_a = File::open(path_a).unwrap();
+    let mut file_b = File::open(path_b).unwrap();
+    let mut buf_a = Vec::with_capacity(input_size.try_into().unwrap());
+    let mut buf_b = Vec::with_capacity(output_size.try_into().unwrap());
+    file_a.read_to_end(&mut buf_a).unwrap();
+    file_b.read_to_end(&mut buf_b).unwrap();
+    if buf_a.eq(&buf_b) {
+        log::trace!("same content");
         return true;
     } else {
-        log::trace!("diff md5, {} and {}", input_md5, output_md5);
+        log::trace!("diff content");
         return false;
     }
 }
@@ -128,7 +124,7 @@ mod tests {
         let mut file_b = File::create(&path_b).unwrap();
         file_a.write_all(b"this is file a").unwrap();
         file_b.write_all(b"this is file b").unwrap();
-        for i in 0..100_000 {
+        for i in 0..1_000 {
             let line = format!("this is line {}\n", i);
             file_a.write_all(line.as_bytes()).unwrap();
             file_b.write_all(line.as_bytes()).unwrap();
@@ -141,7 +137,7 @@ mod tests {
         let path_a = path_dir.join("file_a.png");
         let path_a_copy = path_dir.join("file_a_copy.png");
         let path_b = path_dir.join("file_b.png");
-        let mut imgbuf = image::ImageBuffer::new(12, 12);
+        let mut imgbuf = image::ImageBuffer::new(256, 256);
         for (_, _, pixel) in imgbuf.enumerate_pixels_mut() {
             let r: u8 = 229;
             let g: u8 = 229;
