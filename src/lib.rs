@@ -90,7 +90,7 @@ mod tests {
 
     use crate::is_file_copy;
 
-    fn init_data() -> (PathBuf, PathBuf, PathBuf) {
+    fn init_log() {
         struct LocalTimer;
         impl FormatTime for LocalTimer {
             fn format_time(&self, w: &mut Writer<'_>) -> std::fmt::Result {
@@ -109,19 +109,26 @@ mod tests {
             .with_ansi(true)
             .event_format(format)
             .init();
-        let path_data = Path::new("./data");
-        if path_data.exists() {
-            fs::remove_dir_all(path_data).unwrap();
+    }
+
+    fn init_dir() -> PathBuf {
+        let path_dir = Path::new("./data");
+        if path_dir.exists() {
+            fs::remove_dir_all(path_dir).unwrap();
         }
-        fs::create_dir_all(path_data).unwrap();
-        let path_a = path_data.join("file_a.txt");
-        let path_a_copy = path_data.join("file_a_copy.txt");
-        let path_b = path_data.join("file_b.txt");
+        fs::create_dir_all(path_dir).unwrap();
+        path_dir.to_path_buf()
+    }
+
+    fn init_txt(path_dir: &PathBuf) -> (PathBuf, PathBuf, PathBuf) {
+        let path_a = path_dir.join("file_a.txt");
+        let path_a_copy = path_dir.join("file_a_copy.txt");
+        let path_b = path_dir.join("file_b.txt");
         let mut file_a = File::create(&path_a).unwrap();
         let mut file_b = File::create(&path_b).unwrap();
         file_a.write_all(b"this is file a").unwrap();
         file_b.write_all(b"this is file b").unwrap();
-        for i in 0..1000_000 {
+        for i in 0..100_000 {
             let line = format!("this is line {}\n", i);
             file_a.write_all(line.as_bytes()).unwrap();
             file_b.write_all(line.as_bytes()).unwrap();
@@ -129,10 +136,42 @@ mod tests {
         copy(&path_a, &path_a_copy).unwrap();
         (path_a, path_a_copy, path_b)
     }
+
+    fn init_png(path_dir: &PathBuf) -> (PathBuf, PathBuf, PathBuf) {
+        let path_a = path_dir.join("file_a.png");
+        let path_a_copy = path_dir.join("file_a_copy.png");
+        let path_b = path_dir.join("file_b.png");
+        let mut imgbuf = image::ImageBuffer::new(12, 12);
+        for (_, _, pixel) in imgbuf.enumerate_pixels_mut() {
+            let r: u8 = 229;
+            let g: u8 = 229;
+            let b: u8 = 229;
+            let a: u8 = 229;
+            *pixel = image::Rgba([r, g, b, a]);
+        }
+        imgbuf.save(&path_a).unwrap();
+
+        for (_, _, pixel) in imgbuf.enumerate_pixels_mut() {
+            let r: u8 = 29;
+            let g: u8 = 29;
+            let b: u8 = 29;
+            let a: u8 = 29;
+            *pixel = image::Rgba([r, g, b, a]);
+        }
+        imgbuf.save(&path_b).unwrap();
+        copy(&path_a, &path_a_copy).unwrap();
+        (path_a, path_a_copy, path_b)
+    }
+
     // cargo test tests::test_is_file_copy
     #[test]
     fn test_is_file_copy() {
-        let (path_a, path_a_copy, path_b) = init_data();
+        init_log();
+        let path_dir = init_dir();
+        let (path_a, path_a_copy, path_b) = init_txt(&path_dir);
+        assert!(is_file_copy(&path_a, &path_a_copy));
+        assert!(!is_file_copy(&path_a, &path_b));
+        let (path_a, path_a_copy, path_b) = init_png(&path_dir);
         assert!(is_file_copy(&path_a, &path_a_copy));
         assert!(!is_file_copy(&path_a, &path_b));
     }
