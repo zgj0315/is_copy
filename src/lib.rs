@@ -19,18 +19,12 @@ pub fn is_file_copy(path_a: &Path, path_b: &Path) -> bool {
     }
     log::trace!("same size, {}", input_size);
     let mut file = File::open(path_a).unwrap();
-    // let mut buf = [0u8; 16];
-    let mut buf = Vec::new();
-    // file.read(&mut buf).unwrap();
+    let mut buf = Vec::with_capacity(input_size.try_into().unwrap());
     file.read_to_end(&mut buf).unwrap();
-    log::trace!("buf: {:?}", &buf);
     let input_md5 = format!("{:X}", md5::compute(buf));
     let mut file = File::open(path_b).unwrap();
-    // let mut buf = [0u8; 16];
-    let mut buf = Vec::new();
-    // file.read(&mut buf).unwrap();
+    let mut buf = Vec::with_capacity(input_size.try_into().unwrap());
     file.read_to_end(&mut buf).unwrap();
-    log::trace!("buf: {:?}", &buf);
     let output_md5 = format!("{:X}", md5::compute(buf));
     if input_md5 == output_md5 {
         log::trace!("same md5, {}", input_md5);
@@ -85,15 +79,15 @@ mod tests {
         let mut file_b = File::create(&path_b).unwrap();
         file_a.write_all(b"this is file a").unwrap();
         file_b.write_all(b"this is file b").unwrap();
-        for i in 0..1000 {
-            let line = format!("line {}", i);
+        for i in 0..1000_000 {
+            let line = format!("this is line {}\n", i);
             file_a.write_all(line.as_bytes()).unwrap();
             file_b.write_all(line.as_bytes()).unwrap();
         }
         copy(&path_a, &path_a_copy).unwrap();
         (path_a, path_a_copy, path_b)
     }
-    // cargo test tests::test_is_file_copy -- --nocapture
+    // cargo test tests::test_is_file_copy
     #[test]
     fn test_is_file_copy() {
         let (path_a, path_a_copy, path_b) = init_data();
