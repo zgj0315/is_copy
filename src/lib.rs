@@ -23,7 +23,7 @@ pub fn is_file_copy(path_a: &Path, path_b: &Path) -> bool {
     file.read_to_end(&mut buf).unwrap();
     let input_md5 = format!("{:X}", md5::compute(buf));
     let mut file = File::open(path_b).unwrap();
-    let mut buf = Vec::with_capacity(input_size.try_into().unwrap());
+    let mut buf = Vec::with_capacity(output_size.try_into().unwrap());
     file.read_to_end(&mut buf).unwrap();
     let output_md5 = format!("{:X}", md5::compute(buf));
     if input_md5 == output_md5 {
