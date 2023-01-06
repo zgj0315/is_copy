@@ -81,31 +81,9 @@ mod tests {
         path::{Path, PathBuf},
     };
 
-    use chrono::Local;
-    use tracing_subscriber::fmt::{format::Writer, time::FormatTime};
+    use dev_util::log::log_init;
 
     use crate::is_file_copy;
-
-    fn init_log() {
-        struct LocalTimer;
-        impl FormatTime for LocalTimer {
-            fn format_time(&self, w: &mut Writer<'_>) -> std::fmt::Result {
-                write!(w, "{}", Local::now().format("%F %T%.3f"))
-            }
-        }
-        let format = tracing_subscriber::fmt::format()
-            .with_level(true)
-            .with_target(false)
-            .with_thread_ids(false)
-            .with_thread_names(false)
-            .with_timer(LocalTimer);
-        tracing_subscriber::fmt()
-            .with_max_level(tracing::Level::TRACE)
-            .with_writer(std::io::stdout)
-            .with_ansi(true)
-            .event_format(format)
-            .init();
-    }
 
     fn init_dir() -> PathBuf {
         let path_dir = Path::new("./data");
@@ -162,7 +140,7 @@ mod tests {
     // cargo test tests::test_is_file_copy
     #[test]
     fn test_is_file_copy() {
-        init_log();
+        log_init();
         let path_dir = init_dir();
         let (path_a, path_a_copy, path_b) = init_txt(&path_dir);
         assert!(is_file_copy(&path_a, &path_a_copy));
